@@ -1,6 +1,6 @@
 
   - name: "First VPC"
-    ec2_vpc:
+    ec2_vpc_net:
       state: present
       cidr_block: 110.0.0.0/16
       resource_tags: { "Name":"{{ Name }}" }
@@ -27,7 +27,7 @@
   - debug: msg="" 
 
   - name: "Second VPC"
-    ec2_vpc:
+    ec2_vpc_net:
       state: present
       cidr_block: 200.0.0.0/16
       resource_tags: { "Name":"{{ vpc_name }}" }
