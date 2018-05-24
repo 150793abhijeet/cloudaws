@@ -1,0 +1,84 @@
+---
+- hosts: "localhost"
+  connection: "local"
+
+  tasks:
+  - name: "First VPC"
+    ec2_vpc:
+      state: present
+      cidr_block: 110.0.0.0/16
+      resource_tags: { "Name":"First VPC" }
+      subnets:
+        - cidr: 110.0.1.0/24
+          az: us-east-2a
+          resource_tags: {"Location":"SiteA"}
+        - cidr: 110.0.2.0/24
+          az: us-east-2b
+          resource_tags: {"Location":"SiteB"}
+        - cidr: 110.0.3.0/24
+          az: us-east-2c
+          resource_tags: {"Location":"SiteC"}
+      region: us-east-2
+      wait: "yes" 
+    register: first_vpc
+
+
+  - name: Set vpc2 id
+    local_action:
+      module: set_fact
+      vpc2_id: "{{ first_vpc.vpc.id }}"
+
+  - debug: msg="" 
+
+  - name: "Second VPC"
+    ec2_vpc:
+      state: present
+      cidr_block: 200.0.0.0/16
+      resource_tags: { "Name":"Second VPC" }
+      subnets:
+        - cidr: 200.0.1.0/24
+          az: us-east-2a
+          resource_tags: {"Location":"SiteA"}
+        - cidr: 200.0.2.0/24
+          az: us-east-2b
+          resource_tags: {"Location":"SiteB"}
+        - cidr: 200.0.3.0/24
+          az: us-east-2c
+          resource_tags: {"Location":"SiteC"}
+      region: us-east-2
+      wait: "yes" 
+    register: second_vpc
+
+  - debug: msg="" 
+
+  - name: Set vpc2 id
+    local_action:
+      module: set_fact
+      vpc2_id: "{{ second_vpc.vpc.id }}"
+
+  - debug: msg=""
+
+  - name: "Create local VPC peering connection"
+    ec2_vpc_peer:
+      region: ap-northeast-1
+      vpc_id: "{{ first_vpc.vpc.id }}"
+      peer_vpc_id: "{{ second_vpc.vpc.id }}"
+      state: present
+    register: vpc_peer
+
+  - name: Set vpc
+    local_action:
+      module: set_fact
+      peer: "{{ vpc_peer }}"
+
+  - debug: msg=""
+
+  - name: "Accept local VPC peering connection"
+    ec2_vpc_peer:
+      region: ap-northeast-1
+      peering_id: "{{ vpc_peer }}"
+      state: accept
+    register: accept_peer
+
+  - debug: msg=""
+

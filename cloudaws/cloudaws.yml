@@ -1,0 +1,8 @@
+---
+- name: infar deployment 
+  hosts: localhost 
+  connection: local
+  become: False 
+  gather_facts: False
+  roles: 
+  - cloudaws
