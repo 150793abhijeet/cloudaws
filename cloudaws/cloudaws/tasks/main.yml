@@ -7,7 +7,7 @@
     ec2_vpc:
       state: present
       cidr_block: 110.0.0.0/16
-      resource_tags: { "Name":"First VPC" }
+      resource_tags: { "Name":"{{ Name }}" }
       subnets:
         - cidr: 110.0.1.0/24
           az: us-east-2a
@@ -34,7 +34,7 @@
     ec2_vpc:
       state: present
       cidr_block: 200.0.0.0/16
-      resource_tags: { "Name":"Second VPC" }
+      resource_tags: { "Name":"{{ vpc_name }}" }
       subnets:
         - cidr: 200.0.1.0/24
           az: us-east-2a
