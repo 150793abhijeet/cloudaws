@@ -1,8 +1,4 @@
----
-- hosts: "localhost"
-  connection: "local"
 
-  tasks:
   - name: "First VPC"
     ec2_vpc:
       state: present
